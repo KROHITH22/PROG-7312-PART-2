@@ -18,10 +18,10 @@ namespace LibraryCallNumberSorter
             UserInputListBox.Visibility = Visibility.Hidden;
             CheckOrderButton.Visibility = Visibility.Hidden;
 
-        
+
         }
 
-        
+
         private void ReplacingBooks_Click(object sender, RoutedEventArgs e)
         {
             // Enable the sorting task and disable other tasks
@@ -34,9 +34,9 @@ namespace LibraryCallNumberSorter
             // Display the call numbers to the user
             DisplayCallNumbers();
 
-            CallNumberListBox.Visibility= Visibility.Visible;
-            UserInputListBox.Visibility= Visibility.Visible;
-            CheckOrderButton.Visibility= Visibility.Visible;
+            CallNumberListBox.Visibility = Visibility.Visible;
+            UserInputListBox.Visibility = Visibility.Visible;
+            CheckOrderButton.Visibility = Visibility.Visible;
         }
 
         private void EnableSortingTask()
@@ -57,7 +57,7 @@ namespace LibraryCallNumberSorter
                 }
             }
             UserInputListBox.Items.Clear();
-            
+
         }
 
         private List<string> GenerateRandomCallNumbers(int count)
@@ -89,7 +89,7 @@ namespace LibraryCallNumberSorter
             CallNumberListBox.ItemsSource = callNumbers;
         }
 
-        
+
 
         private bool IsCorrectOrder(List<string> userOrderedCallNumbers)
         {
@@ -169,29 +169,30 @@ namespace LibraryCallNumberSorter
             {
                 MessageBox.Show($"{wrongCount} call numbers are out of order");
             }
-
+        }
+    }
 
 
 namespace LibraryCallNumberSorter
-{
-    public partial class MainWindow : Window
     {
-        private List<string> callNumbers;
-        private List<CallNumberDescriptionPair> callNumberDescriptionPairs;
-        private int currentQuestionIndex = 0;
-
-        public MainWindow()
+        public partial class MainWindow : Window
         {
+            private List<string> callNumbers;
+            private List<CallNumberDescriptionPair> callNumberDescriptionPairs;
+            private int currentQuestionIndex = 0;
 
-            // Initialize the list of call number and description pairs
-            callNumberDescriptionPairs = InitializeCallNumberDescriptionPairs();
-        }
+            public MainWindow()
+            {
 
-        private List<CallNumberDescriptionPair> InitializeCallNumberDescriptionPairs()
-        {
-            // You can replace this with your actual data source
-            // For demonstration purposes, we're using some sample data
-            return new List<CallNumberDescriptionPair>
+                // Initialize the list of call number and description pairs
+                callNumberDescriptionPairs = InitializeCallNumberDescriptionPairs();
+            }
+
+            private List<CallNumberDescriptionPair> InitializeCallNumberDescriptionPairs()
+            {
+                // You can replace this with your actual data source
+                // For demonstration purposes, we're using some sample data
+                return new List<CallNumberDescriptionPair>
             {
                 new CallNumberDescriptionPair("QA123", "Mathematics"),
                 new CallNumberDescriptionPair("PS456", "English Literature"),
@@ -199,145 +200,145 @@ namespace LibraryCallNumberSorter
                 new CallNumberDescriptionPair("QP112", "Biology"),
                 // Add more pairs here
             };
-        }
+            }
 
-        // ... Existing code ...
+            // ... Existing code ...
 
-        private void IdentifyingAreas_Click(object sender, RoutedEventArgs e)
-        {
-            // Enable the identifying areas task and disable other tasks
-            EnableIdentifyingAreasTask();
-
-            // Start the identifying areas task
-            StartIdentifyingAreasTask();
-        }
-
-        private void EnableIdentifyingAreasTask()
-        {
-            // Enable identifying areas task button and disable others
-            foreach (UIElement element in rb_stackpanel.Children)
+            private void IdentifyingAreas_Click(object sender, RoutedEventArgs e)
             {
-                if (element is Button button)
+                // Enable the identifying areas task and disable other tasks
+                EnableIdentifyingAreasTask();
+
+                // Start the identifying areas task
+                StartIdentifyingAreasTask();
+            }
+
+            private void EnableIdentifyingAreasTask()
+            {
+                // Enable identifying areas task button and disable others
+                foreach (UIElement element in rb_stackpanel)
                 {
-                    if (button.Content.ToString() == "Identifying Areas")
+                    if (element is Button button)
                     {
-                        button.IsEnabled = false;
-                    }
-                    else
-                    {
-                        button.IsEnabled = true;
+                        if (button.Content.ToString() == "Identifying Areas")
+                        {
+                            button.IsEnabled = false;
+                        }
+                        else
+                        {
+                            button.IsEnabled = true;
+                        }
                     }
                 }
             }
-        }
 
-        private void StartIdentifyingAreasTask()
-        {
-            if (currentQuestionIndex < callNumberDescriptionPairs.Count)
+            private void StartIdentifyingAreasTask()
             {
-                // Display the next question
-                DisplayIdentifyingAreasQuestion(callNumberDescriptionPairs[currentQuestionIndex]);
-            }
-            else
-            {
-                // All questions have been answered
-                MessageBox.Show("Congratulations! You've completed all the questions.");
-            }
-        }
-
-        private void DisplayIdentifyingAreasQuestion(CallNumberDescriptionPair pair)
-        {
-            // Clear the previous question and answers
-            CallNumberListBox.Items.Clear();
-            UserInputListBox.Items.Clear();
-
-            // Randomly select four items for the first column
-            List<string> randomItems = GetRandomItems(pair.Description, 4);
-
-            // Create a list of possible answers
-            List<string> possibleAnswers = new List<string> { pair.CallNumber };
-
-            // Add three incorrect answers (randomly generated)
-            for (int i = 0; i < 3; i++)
-            {
-                string incorrectAnswer = GetRandomCallNumber();
-                while (possibleAnswers.Contains(incorrectAnswer))
+                if (currentQuestionIndex < callNumberDescriptionPairs.Count)
                 {
-                    incorrectAnswer = GetRandomCallNumber();
-                }
-                possibleAnswers.Add(incorrectAnswer);
-            }
-
-            // Randomize the order of possible answers
-            possibleAnswers = possibleAnswers.OrderBy(a => Guid.NewGuid()).ToList();
-
-            // Display the question and possible answers
-            CallNumberListBox.ItemsSource = randomItems;
-            UserInputListBox.ItemsSource = possibleAnswers;
-        }
-
-        private List<string> GetRandomItems(string correctAnswer, int count)
-        {
-            List<string> items = new List<string> { correctAnswer };
-
-            for (int i = 0; i < count - 1; i++)
-            {
-                string randomDescription = callNumberDescriptionPairs
-                    .Where(pair => pair.Description != correctAnswer)
-                    .OrderBy(x => Guid.NewGuid())
-                    .Select(pair => pair.Description)
-                    .First();
-
-                items.Add(randomDescription);
-            }
-
-            // Shuffle the items
-            items = items.OrderBy(a => Guid.NewGuid()).ToList();
-            return items;
-        }
-
-        private string GetRandomCallNumber()
-        {
-            // Generate a random call number (replace with your logic)
-            Random rand = new Random();
-            return "XX" + rand.Next(1000, 9999);
-        }
-
-        private void UserInputListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (UserInputListBox.SelectedItem != null)
-            {
-                string selectedAnswer = UserInputListBox.SelectedItem.ToString();
-
-                // Check if the selected answer is correct
-                if (selectedAnswer == callNumberDescriptionPairs[currentQuestionIndex].CallNumber)
-                {
-                    MessageBox.Show("Correct! Well done.");
+                    // Display the next question
+                    DisplayIdentifyingAreasQuestion(callNumberDescriptionPairs[currentQuestionIndex]);
                 }
                 else
                 {
-                    MessageBox.Show("Incorrect. Try again.");
+                    // All questions have been answered
+                    MessageBox.Show("Congratulations! You've completed all the questions.");
+                }
+            }
+
+            private void DisplayIdentifyingAreasQuestion(CallNumberDescriptionPair pair)
+            {
+                // Clear the previous question and answers
+                CallNumberListBox.Items.Clear();
+                UserInputListBox.Items.Clear();
+
+                // Randomly select four items for the first column
+                List<string> randomItems = GetRandomItems(pair.Description, 4);
+
+                // Create a list of possible answers
+                List<string> possibleAnswers = new List<string> { pair.CallNumber };
+
+                // Add three incorrect answers (randomly generated)
+                for (int i = 0; i < 3; i++)
+                {
+                    string incorrectAnswer = GetRandomCallNumber();
+                    while (possibleAnswers.Contains(incorrectAnswer))
+                    {
+                        incorrectAnswer = GetRandomCallNumber();
+                    }
+                    possibleAnswers.Add(incorrectAnswer);
                 }
 
-                // Move to the next question
-                currentQuestionIndex++;
-                StartIdentifyingAreasTask();
+                // Randomize the order of possible answers
+                possibleAnswers = possibleAnswers.OrderBy(a => Guid.NewGuid()).ToList();
+
+                // Display the question and possible answers
+                CallNumberListBox.ItemsSource = randomItems;
+                UserInputListBox.ItemsSource = possibleAnswers;
             }
-        }
 
-        // ... Other methods ...
-
-        private class CallNumberDescriptionPair
-        {
-            public string CallNumber { get; }
-            public string Description { get; }
-
-            public CallNumberDescriptionPair(string callNumber, string description)
+            private List<string> GetRandomItems(string correctAnswer, int count)
             {
-                CallNumber = callNumber;
-                Description = description;
+                List<string> items = new List<string> { correctAnswer };
+
+                for (int i = 0; i < count - 1; i++)
+                {
+                    string randomDescription = callNumberDescriptionPairs
+                        .Where(pair => pair.Description != correctAnswer)
+                        .OrderBy(x => Guid.NewGuid())
+                        .Select(pair => pair.Description)
+                        .First();
+
+                    items.Add(randomDescription);
+                }
+
+                // Shuffle the items
+                items = items.OrderBy(a => Guid.NewGuid()).ToList();
+                return items;
+            }
+
+            private string GetRandomCallNumber()
+            {
+                // Generate a random call number (replace with your logic)
+                Random rand = new Random();
+                return "XX" + rand.Next(1000, 9999);
+            }
+
+            private void UserInputListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+            {
+                if (UserInputListBox.SelectedItem != null)
+                {
+                    string selectedAnswer = UserInputListBox.SelectedItem.ToString();
+
+                    // Check if the selected answer is correct
+                    if (selectedAnswer == callNumberDescriptionPairs[currentQuestionIndex].CallNumber)
+                    {
+                        MessageBox.Show("Correct! Well done.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Incorrect. Try again.");
+                    }
+
+                    // Move to the next question
+                    currentQuestionIndex++;
+                    StartIdentifyingAreasTask();
+                }
+            }
+
+            // ... Other methods ...
+
+            private class CallNumberDescriptionPair
+            {
+                public string CallNumber { get; }
+                public string Description { get; }
+
+                public CallNumberDescriptionPair(string callNumber, string description)
+                {
+                    CallNumber = callNumber;
+                    Description = description;
+                }
             }
         }
     }
 }
-
